@@ -1,0 +1,15 @@
+# node_modules (React)
+frontend/node_modules/
+
+# IDE 환경
+.vscode/
+.idea/
+
+# 빌드 결과물
+**/build/
+**/dist/
+**/out/
+**/target/
+
+# 환경파일
+**/.env

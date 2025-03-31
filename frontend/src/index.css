@@ -1,0 +1,44 @@
+/* 기본 글꼴 및 색상 */
+:root {
+  font-family: "Noto Sans KR", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color: #000;
+  background-color: #f0f4f8;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* a 링크 기본 스타일 */
+a {
+  font-weight: 500;
+  color: #6c88f1;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* 💡 핵심: 페이지 전체를 꽉 채우고 중앙 정렬 */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f4f8;
+}
+
+/* 버튼 기본값 제거 */
+button {
+  all: unset;
+}
+
+/* 헤딩 */
+h1, h2, h3 {
+  margin: 0;
+}
