@@ -5,62 +5,67 @@ function SignupPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSignup = async () => {
+    if (!username || !password || !passwordConfirm) {
+      setErrorMessage("모든 항목을 입력해주세요.");
+      return;
+    }
+
     if (password !== passwordConfirm) {
-      alert("비밀번호가 일치하지 않습니다.");
+      setErrorMessage("비밀번호가 일치하지 않습니다.");
       return;
     }
 
     try {
-      await axios.post("http://localhost:8080/api/signup", null, {
-        params: { username, password },
-        withCredentials: false,
+      await axios.post("http://localhost:8080/api/signup", {
+        username,
+        password
+      }, {
+        headers: { "Content-Type": "application/json" }
       });
+
       alert("회원가입 성공!");
+      setUsername("");
+      setPassword("");
+      setPasswordConfirm("");
+      setErrorMessage("");
     } catch (err: any) {
-      alert("회원가입 실패: " + (err.response?.data || err.message));
+      const errorMsg = err.response?.data?.message || "회원가입 실패";
+      setErrorMessage(errorMsg);
     }
   };
 
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        {/* ✅ 중앙 정렬 강제 적용 */}
-        <h2 style={{ fontSize: "22px", fontWeight: "bold", marginBottom: "24px", margin: "0 auto" }}>
-  회원가입
-</h2>
+        <h2 style={styles.title}>회원가입</h2>
 
-        <form onSubmit={handleSignup}>
-          <input
-            type="text"
-            placeholder="아이디"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={styles.input}
-          />
-          <input
-            type="password"
-            placeholder="비밀번호"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={styles.input}
-          />
-          <input
-            type="password"
-            placeholder="비밀번호 확인"
-            value={passwordConfirm}
-            onChange={(e) => setPasswordConfirm(e.target.value)}
-            style={styles.input}
-          />
-          <button type="submit" style={styles.button}>회원가입</button>
-        </form>
+        {errorMessage && <p style={styles.error}>{errorMessage}</p>}
 
-        <p style={styles.bottomText}>
-          이미 계정이 있으신가요?{" "}
-          <a href="/login" style={styles.link}>로그인</a>
-        </p>
+        <input
+          type="text"
+          placeholder="아이디"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          style={styles.input}
+        />
+        <input
+          type="password"
+          placeholder="비밀번호"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={styles.input}
+        />
+        <input
+          type="password"
+          placeholder="비밀번호 확인"
+          value={passwordConfirm}
+          onChange={(e) => setPasswordConfirm(e.target.value)}
+          style={styles.input}
+        />
+        <button onClick={handleSignup} style={styles.button}>회원가입</button>
       </div>
     </div>
   );
@@ -68,62 +73,47 @@ function SignupPage() {
 
 const styles = {
   page: {
-    height: "100vh",
-    backgroundColor: "#f0f4f8",
     display: "flex",
+    height: "100vh",
     justifyContent: "center",
     alignItems: "center",
-    padding: "20px",
-    boxSizing: "border-box",
+    backgroundColor: "#f4f4f4",
   },
   card: {
-    backgroundColor: "#ffffff",
-    padding: "40px",
-    width: "100%",
-    maxWidth: "360px",
-    borderRadius: "16px",
-    boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
-    display: "flex", // ✅ 카드 안에서도 중앙 정렬되도록
+    backgroundColor: "#fff",
+    padding: "32px",
+    borderRadius: "8px",
+    boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+    display: "flex",
     flexDirection: "column",
-    alignItems: "center", // ✅ 카드 내부 모든 항목 수평 중앙 정렬
+    width: "300px",
   },
   title: {
-    fontSize: "22px",
-    marginBottom: "24px",
-    fontWeight: "bold",
-    textAlign: "center" as const, // ✅ 추가
+    textAlign: "center" as const,
+    marginBottom: "20px",
+    fontSize: "24px",
   },
   input: {
-    width: "100%",
-    padding: "12px",
-    marginBottom: "16px",
-    borderRadius: "10px",
-    border: "1px solid #ccc",
+    marginBottom: "12px",
+    padding: "10px",
     fontSize: "14px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
   },
   button: {
-    width: "100%",
     padding: "12px",
-    backgroundColor: "#d5def5",
-    color: "#000",
-    fontWeight: "bold",
-    fontSize: "15px",
+    fontSize: "16px",
+    backgroundColor: "#6c88f1",
+    color: "white",
     border: "none",
-    borderRadius: "10px",
+    borderRadius: "4px",
     cursor: "pointer",
-    marginTop: "10px",
   },
-  bottomText: {
-    marginTop: "20px",
-    textAlign: "center" as const,
+  error: {
+    color: "red",
     fontSize: "14px",
-    color: "#666",
-  },
-  link: {
-    textDecoration: "none",
-    color: "#6c88f1",
-    fontWeight: "bold",
-  },
+    marginBottom: "12px",
+  }
 } as const;
 
 export default SignupPage;
