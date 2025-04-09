@@ -3,7 +3,8 @@ import { FaSearch } from "react-icons/fa";
 function Header() {
   return (
     <header style={styles.header}>
-      <div style={styles.logo}>오늘의 뉴스</div>
+      {/* '오늘의 뉴스' 클릭 시 /로 이동하도록 수정 */}
+      <a href="/" style={styles.logo}>오늘의 뉴스</a>
       <nav style={styles.nav}>
         <a href="/" style={styles.link}>홈</a>
         <a href="/world" style={styles.link}>세계</a>
@@ -36,6 +37,8 @@ const styles = {
   logo: {
     fontSize: "16px",
     fontWeight: "bold",
+    color: "#fff",
+    textDecoration: "none" // 링크 스타일 유지
   },
   nav: {
     display: "flex",
