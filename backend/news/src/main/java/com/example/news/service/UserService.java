@@ -11,12 +11,19 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public void register(String username, String rawPassword) {
-        String encodedPassword = passwordEncoder.encode(rawPassword);
+    public void signup(String username, String password) {
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+        }
 
-        User user = new User(username, encodedPassword);
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
+    }
+    public boolean isUsernameTaken(String username) {
+        return userRepository.findByUsername(username).isPresent();
     }
 }
