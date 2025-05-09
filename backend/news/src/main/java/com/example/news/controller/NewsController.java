@@ -15,7 +15,7 @@ public class NewsController {
 
     @GetMapping("/search")
     public ResponseEntity<?> searchNews(@RequestParam String query) {
-        String jsonResult = newsService.searchNews(query);
-        return ResponseEntity.ok(jsonResult);
+        return newsService.searchNews(query); // ✔️ 그대로 return
     }
+
 }

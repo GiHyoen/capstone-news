@@ -44,7 +44,12 @@ const LoginPage = () => {
         <p style={styles.snsText}>SNS 계정으로 이용하기</p>
         <div style={styles.snsIcons}>
           <img src="/images/naver.png" alt="naver" style={styles.snsIcon} />
-          <img src="/images/kakao.png" alt="kakao" style={styles.snsIcon} />
+          <img
+            src="/images/kakao.png"
+            alt="kakao"
+            style={styles.snsIcon}
+            onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/kakao'}
+          />
           <img src="/images/google.png" alt="google" style={styles.snsIcon} />
           <img src="/images/facebook.png" alt="facebook" style={styles.snsIcon} />
         </div>
@@ -116,6 +121,7 @@ const styles = {
     width: '50px',
     height: '50px',
     borderRadius: '6px',
+    cursor: 'pointer',
   },
 } as const;
 

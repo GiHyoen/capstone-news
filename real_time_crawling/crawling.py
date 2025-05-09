@@ -1,4 +1,6 @@
 import os
+import sys
+import io
 import urllib.request
 import datetime
 import json
@@ -7,8 +9,10 @@ import urllib.parse
 client_id = 'aFzMN5Aq9I_yZU53XgP6'
 client_secret = '_VozDZysXY'
 
+sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
+
 # ✅ 저장할 절대 경로 설정
-SAVE_DIR = "/Users/gihyeon/Documents/github/capstone-news"
+SAVE_DIR = "C:/Users/cptai/OneDrive/Desktop/GitHub/capstone-news/real_time_crawling"
 
 def getRequestUrl(url):
     req = urllib.request.Request(url)
@@ -18,11 +22,11 @@ def getRequestUrl(url):
     try:
         response = urllib.request.urlopen(req)
         if response.getcode() == 200:
-            print("[%s] ✅ URL 요청 성공" % datetime.datetime.now())
+            print("[%s]  URL 요청 성공" % datetime.datetime.now())
             return response.read().decode('utf-8')
     except Exception as e:
-        print("❌", e)
-        print("[%s] ❌ URL 요청 에러 : %s" % (datetime.datetime.now(), url))
+        print("", e)
+        print("[%s]  URL 요청 에러 : %s" % (datetime.datetime.now(), url))
         return None
 
 def getNaverSearch(node, srcText, start, display):

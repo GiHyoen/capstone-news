@@ -1,6 +1,7 @@
 package com.example.news.controller;
 
 import com.example.news.service.AuthService;
+import com.example.news.service.KakaoUnlinkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final KakaoUnlinkService kakaoUnlinkService; // ✅ 추가된 서비스 주입
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
@@ -20,6 +22,19 @@ public class AuthController {
             return ResponseEntity.ok("로그인 성공");
         } else {
             return ResponseEntity.status(401).body("로그인 실패: 아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    // ✅ 카카오 연결 해제 API 추가
+    @PostMapping("/kakao/logout")
+    public ResponseEntity<String> kakaoLogout(@RequestHeader("Authorization") String bearerToken) {
+        String accessToken = bearerToken.replace("Bearer ", "");
+
+        boolean result = kakaoUnlinkService.unlinkKakaoUser(accessToken);
+        if (result) {
+            return ResponseEntity.ok("카카오 연결 해제 완료");
+        } else {
+            return ResponseEntity.status(500).body("카카오 연결 해제 실패");
         }
     }
 }
