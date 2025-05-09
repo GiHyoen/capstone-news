@@ -43,15 +43,18 @@ const LoginPage = () => {
         </div>
         <p style={styles.snsText}>SNS 계정으로 이용하기</p>
         <div style={styles.snsIcons}>
-          <img src="/images/naver.png" alt="naver" style={styles.snsIcon} />
-          <img
-            src="/images/kakao.png"
-            alt="kakao"
-            style={styles.snsIcon}
-            onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/kakao'}
-          />
-          <img src="/images/google.png" alt="google" style={styles.snsIcon} />
-          <img src="/images/facebook.png" alt="facebook" style={styles.snsIcon} />
+          <a href="http://localhost:8080/oauth2/authorization/naver">
+            <img src="/images/naver.png" alt="naver" style={styles.snsIcon} />
+          </a>
+          <a href="http://localhost:8080/oauth2/authorization/kakao">
+            <img src="/images/kakao.png" alt="kakao" style={styles.snsIcon} />
+          </a>
+          <a href="http://localhost:8080/oauth2/authorization/google">
+            <img src="/images/google.png" alt="google" style={styles.snsIcon} />
+          </a>
+          <a href="http://localhost:8080/oauth2/authorization/facebook">
+            <img src="/images/facebook.png" alt="facebook" style={styles.snsIcon} />
+          </a>
         </div>
       </div>
     </div>
