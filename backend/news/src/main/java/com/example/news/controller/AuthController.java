@@ -1,6 +1,7 @@
 package com.example.news.controller;
 
 import com.example.news.service.AuthService;
+import com.example.news.service.KakaoUnlinkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private final KakaoUnlinkService kakaoUnlinkService; // ✅ 추가된 서비스 주입
 
     // ✅ 일반 로그인
     @PostMapping("/login")
@@ -28,7 +30,20 @@ public class AuthController {
         }
     }
 
-    // ✅ OAuth2 로그인 성공 처리
+    // ✅ 카카오 연결 해제 API
+    @PostMapping("/kakao/logout")
+    public ResponseEntity<String> kakaoLogout(@RequestHeader("Authorization") String bearerToken) {
+        String accessToken = bearerToken.replace("Bearer ", "");
+
+        boolean result = kakaoUnlinkService.unlinkKakaoUser(accessToken);
+        if (result) {
+            return ResponseEntity.ok("카카오 연결 해제 완료");
+        } else {
+            return ResponseEntity.status(500).body("카카오 연결 해제 실패");
+        }
+    }
+
+    // ✅ OAuth2 로그인 성공 시 사용자 정보 반환
     @GetMapping("/login/oauth2/success")
     public ResponseEntity<?> oauthLoginSuccess(@AuthenticationPrincipal OAuth2User oauthUser) {
         Map<String, Object> attributes = oauthUser.getAttributes();

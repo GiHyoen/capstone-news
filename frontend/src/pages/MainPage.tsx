@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import { CiSquarePlus } from "react-icons/ci";
 import { FaStar, FaBookBookmark } from "react-icons/fa6";
-import Header from "../components/Header"; // 공통 Header 컴포넌트 사용
+import Header from "../components/Header";
+import KakaoLogoutButton from "../components/KakaoLogoutButton";
 
 interface NewsCardProps {
   title: string;
@@ -71,32 +72,40 @@ const RightPanel: React.FC = () => {
   );
 };
 
-const MainPage: React.FC = () => (
-  <div style={styles.app}>
-    <Header />
-    <CategoryBar />
-    <main style={styles.main}>
-      <div style={styles.column}>
-        <h2 style={styles.topStories}>Top Stories</h2>
-        <NewsCard title="30대 가장 싱크홀 비극…주7일 일 배달 부업 뛰다 참변" summary="서울 강남구 역삼동 싱크홀 사고로 사망한 모모씨의 흔적이 전해지며 안타까움을 사고 있다." image="/images/sinkhole.png" />
-        <NewsCard title="산불 의심돼 헬기 출동, 조종사 숨져…군작전 헬기긴급 출동 중" summary="당시엔 비행허가가 없던 상황이었으며 국방부에 따르면 임무가 완료되지 않은 상태였다." image="/images/helicopter.png" />
+const MainPage: React.FC = () => {
+  return (
+    <div style={styles.app}>
+      <Header />
+
+      {/* 로그아웃 버튼 */}
+      <div style={styles.logoutBox}>
+        <KakaoLogoutButton />
       </div>
-      <div style={styles.column}>
-        <NewsCard title="은하 중심에서 몰려오는 우주 토네이도 [우주로 간다]" summary="천문학자들이 밝혀낸 은하 중심의 토네이도 현상과 그로 인한 우주폭풍 효과를 다룬 과학 기사." image="/images/galaxy.png" />
-        <NewsCard title="이해진 창업한 네이버, 김범수 떠난 카카오…주홍서도 'AI'" summary="네이버와 카카오의 AI 기술 경쟁과 관련된 분석 기사로, 두 회사의 기술력과 전략이 비교됨." image="/images/naver-kakao.png" />
-      </div>
-      <div style={styles.column}>
-        <RightPanel />
-      </div>
-    </main>
-  </div>
-);
+
+      <CategoryBar />
+      <main style={styles.main}>
+        <div style={styles.column}>
+          <h2 style={styles.topStories}>Top Stories</h2>
+          <NewsCard title="30대 가장 싱크홀 비극…주7일 일 배달 부업 뛰다 참변" summary="서울 강남구 역삼동 싱크홀 사고로 사망한 모모씨의 흔적이 전해지며 안타까움을 사고 있다." image="/images/sinkhole.png" />
+          <NewsCard title="산불 의심돼 헬기 출동, 조종사 숨져…군작전 헬기긴급 출동 중" summary="당시엔 비행허가가 없던 상황이었으며 국방부에 따르면 임무가 완료되지 않은 상태였다." image="/images/helicopter.png" />
+        </div>
+        <div style={styles.column}>
+          <NewsCard title="은하 중심에서 몰려오는 우주 토네이도 [우주로 간다]" summary="천문학자들이 밝혀낸 은하 중심의 토네이도 현상과 그로 인한 우주폭풍 효과를 다룬 과학 기사." image="/images/galaxy.png" />
+          <NewsCard title="이해진 창업한 네이버, 김범수 떠난 카카오…주홍서도 'AI'" summary="네이버와 카카오의 AI 기술 경쟁과 관련된 분석 기사로, 두 회사의 기술력과 전략이 비교됨." image="/images/naver-kakao.png" />
+        </div>
+        <div style={styles.column}>
+          <RightPanel />
+        </div>
+      </main>
+    </div>
+  );
+};
 
 const styles = {
   app: { fontFamily: 'Segoe UI, sans-serif' },
   categoryBarWrapper: {
     position: 'fixed' as const,
-    top: '50px', // 헤더 아래에 붙도록 조정
+    top: '50px',
     left: 0,
     width: '100%',
     backgroundColor: 'white',
@@ -131,6 +140,15 @@ const styles = {
   rightTitle: { fontWeight: 'bold', marginBottom: '12px', fontSize: '16px' },
   rightList: { listStyle: 'none', padding: 0, fontSize: '13px' },
   rightItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' },
+  logoutBox: {
+    display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
+    padding: '8px 24px', marginTop: '60px'
+  },
+  logoutButton: {
+    backgroundColor: '#FEE500', color: '#000', border: 'none',
+    padding: '8px 12px', borderRadius: '8px', fontWeight: 600,
+    cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+  },
 } as const;
 
 export default MainPage;

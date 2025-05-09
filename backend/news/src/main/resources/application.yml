@@ -10,7 +10,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/news?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: rlgus007582!
+    password: rlgus007582!  # ⚠️ 둘 중 어떤 비밀번호를 쓸지는 실제 사용자 선택
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -26,6 +26,14 @@ spring:
     oauth2:
       client:
         registration:
+          kakao:
+            client-id: "e52d1648457a29fba5eb0d884bc410e1"
+            client-secret: ""  # 대부분 사용하지 않음
+            redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
+            authorization-grant-type: authorization_code
+            client-name: Kakao
+            scope: profile_nickname
+
           naver:
             client-id: lKmPrmJGPOFZSL9kf7QJ
             client-secret: SAE2_PFDmK
@@ -35,7 +43,14 @@ spring:
             scope:
               - name
               - email
+
         provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
           naver:
             authorization-uri: https://nid.naver.com/oauth2.0/authorize
             token-uri: https://nid.naver.com/oauth2.0/token

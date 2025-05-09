@@ -1,0 +1,58 @@
+[
+    {
+        "cnt": 1,
+        "title": "도쿄 증시서 외국인들 가치주 매수 시동",
+        "description": "params =&quot;coll=&quot;+col1+ &quot;&amp;<b>query</b>=&quot;+<b>encodeURIComponent(</b>searchTxt1)+ &quot;&amp;sort=date&quot;+ &quot;&amp;from_date=&quot;+startDate1+ //fromDt+ &quot;&amp;to_date=&quot;+toKoreanTime(strDate+&quot;&quot;+strTime)+&quot;00&quot;+ //&quot;&amp;writer_dept_id=&quot;+ //&quot;&amp;media=&quot;+ &quot;&amp;detail... ",
+        "org_link": "http://www.ccdailynews.com/news/articleView.html?idxno=818975",
+        "link": "http://www.ccdailynews.com/news/articleView.html?idxno=818975",
+        "pDate": "2015-09-15 17:43:00"
+    },
+    {
+        "cnt": 2,
+        "title": "국내 최대 모바일 전시회 '글로벌 모바일 비전' 개최",
+        "description": "params =&quot;coll=&quot;+col1+ &quot;&amp;<b>query</b>=&quot;+<b>encodeURIComponent(</b>searchTxt1)+ &quot;&amp;sort=date&quot;+ &quot;&amp;from_date=&quot;+startDate1+ //fromDt+ &quot;&amp;to_date=&quot;+toKoreanTime(strDate+&quot;&quot;+strTime)+&quot;00&quot;+ //&quot;&amp;writer_dept_id=&quot;+ //&quot;&amp;media=&quot;+ &quot;&amp;detail... ",
+        "org_link": "http://www.ccdailynews.com/news/articleView.html?idxno=819000",
+        "link": "http://www.ccdailynews.com/news/articleView.html?idxno=819000",
+        "pDate": "2015-09-15 17:43:00"
+    },
+    {
+        "cnt": 3,
+        "title": "KB금융, 쇼트트랙 최민정·피겨 차준환 후원",
+        "description": "params =&quot;coll=&quot;+col1+ &quot;&amp;<b>query</b>=&quot;+<b>encodeURIComponent(</b>searchTxt1)+ &quot;&amp;sort=date&quot;+ &quot;&amp;from_date=&quot;+startDate1+ //fromDt+ &quot;&amp;to_date=&quot;+toKoreanTime(strDate+&quot;&quot;+strTime)+&quot;00&quot;+ //&quot;&amp;writer_dept_id=&quot;+ //&quot;&amp;media... ",
+        "org_link": "http://www.ccdailynews.com/news/articleView.html?idxno=818979",
+        "link": "http://www.ccdailynews.com/news/articleView.html?idxno=818979",
+        "pDate": "2015-09-15 17:43:00"
+    },
+    {
+        "cnt": 4,
+        "title": "대기업 81% &quot;임금피크제 시행중이거나 도입검토&quot;",
+        "description": "params =&quot;coll=&quot;+col1+ &quot;&amp;<b>query</b>=&quot;+<b>encodeURIComponent(</b>searchTxt1)+ &quot;&amp;sort=date&quot;+ &quot;&amp;from_date=&quot;+startDate1+ //fromDt+ &quot;&amp;to_date=&quot;+toKoreanTime(strDate+&quot;&quot;+strTime)+&quot;00&quot;+ //&quot;&amp;writer_dept_id=&quot;+ //&quot;&amp;media=&quot;+ &quot;&amp;detail... ",
+        "org_link": "http://www.ccdailynews.com/news/articleView.html?idxno=818980",
+        "link": "http://www.ccdailynews.com/news/articleView.html?idxno=818980",
+        "pDate": "2015-09-15 17:43:00"
+    },
+    {
+        "cnt": 5,
+        "title": "스트레스받은 암세포, 악성 암줄기세포로 변한다",
+        "description": "params =&quot;coll=&quot;+col1+ &quot;&amp;<b>query</b>=&quot;+<b>encodeURIComponent(</b>searchTxt1)+ &quot;&amp;sort=date&quot;+ &quot;&amp;from_date=&quot;+startDate1+ //fromDt+ &quot;&amp;to_date=&quot;+toKoreanTime(strDate+&quot;&quot;+strTime)+&quot;00&quot;+ //&quot;&amp;writer_dept_id=&quot;+ //&quot;&amp;media=&quot;+ &quot;&amp;detail... ",
+        "org_link": "http://www.ccdailynews.com/news/articleView.html?idxno=819001",
+        "link": "http://www.ccdailynews.com/news/articleView.html?idxno=819001",
+        "pDate": "2015-09-15 17:43:00"
+    },
+    {
+        "cnt": 6,
+        "title": "유럽 챔스리그 '팡파르'…맨유·PSV, 맨시티·유벤투스 격돌",
+        "description": "params =&quot;coll=&quot;+col1+ &quot;&amp;<b>query</b>=&quot;+<b>encodeURIComponent(</b>searchTxt1)+ &quot;&amp;sort=date&quot;+ &quot;&amp;from_date=&quot;+startDate1+ //fromDt+ &quot;&amp;to_date=&quot;+toKoreanTime(strDate+&quot;&quot;+strTime)+&quot;00&quot;+ //&quot;&amp;writer_dept_id=&quot;+ //&quot;&amp;media=&quot;+ &quot;&amp;detail... ",
+        "org_link": "http://www.ccdailynews.com/news/articleView.html?idxno=818965",
+        "link": "http://www.ccdailynews.com/news/articleView.html?idxno=818965",
+        "pDate": "2015-09-15 11:41:00"
+    },
+    {
+        "cnt": 7,
+        "title": "'SNS 파동' 롯데 이성민 &quot;초심 잃지 않을게요&quot;",
+        "description": "params =&quot;coll=&quot;+col1+ &quot;&amp;<b>query</b>=&quot;+<b>encodeURIComponent(</b>searchTxt1)+ &quot;&amp;sort=date&quot;+ &quot;&amp;from_date=&quot;+startDate1+ //fromDt+ &quot;&amp;to_date=&quot;+toKoreanTime(strDate+&quot;&quot;+strTime)+&quot;00&quot;+ //&quot;&amp;writer_dept_id=&quot;+ //&quot;&amp;media=&quot;+ &quot;&amp;detail... ",
+        "org_link": "http://www.ccdailynews.com/news/articleView.html?idxno=818955",
+        "link": "http://www.ccdailynews.com/news/articleView.html?idxno=818955",
+        "pDate": "2015-09-15 11:41:00"
+    }
+]

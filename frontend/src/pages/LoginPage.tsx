@@ -55,7 +55,7 @@ const LoginPage = () => {
           <a href="http://localhost:8080/oauth2/authorization/facebook">
             <img src="/images/facebook.png" alt="facebook" style={styles.snsIcon} />
           </a>
-      </div>
+        </div>
       </div>
     </div>
   );
@@ -124,6 +124,7 @@ const styles = {
     width: '50px',
     height: '50px',
     borderRadius: '6px',
+    cursor: 'pointer',
   },
 } as const;
 
