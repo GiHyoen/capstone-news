@@ -3,7 +3,11 @@ package com.example.news.controller;
 import com.example.news.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -13,6 +17,7 @@ public class AuthController {
 
     private final AuthService authService;
 
+    // ✅ 일반 로그인
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
         boolean success = authService.login(username, password);
@@ -21,5 +26,20 @@ public class AuthController {
         } else {
             return ResponseEntity.status(401).body("로그인 실패: 아이디 또는 비밀번호가 일치하지 않습니다.");
         }
+    }
+
+    // ✅ OAuth2 로그인 성공 처리
+    @GetMapping("/login/oauth2/success")
+    public ResponseEntity<?> oauthLoginSuccess(@AuthenticationPrincipal OAuth2User oauthUser) {
+        Map<String, Object> attributes = oauthUser.getAttributes();
+
+        // 네이버의 경우 사용자 정보는 "response" 키 안에 있음
+        if (attributes.containsKey("response")) {
+            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+            return ResponseEntity.ok(response);
+        }
+
+        // 페이스북 등 다른 제공자의 경우 바로 attributes 사용
+        return ResponseEntity.ok(attributes);
     }
 }
