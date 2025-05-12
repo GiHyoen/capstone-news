@@ -16,47 +16,44 @@ import java.util.Map;
 @Service
 public class NewsService {
 
-    // ✅ 파이썬 실행 파일 경로
-    private final String PYTHON_PATH = "C:/Users/cptai/AppData/Local/Microsoft/WindowsApps/python3.exe";
-
-    // ✅ 파이썬 크롤링 스크립트 경로
-    private final String SCRIPT_PATH = "C:/Users/cptai/OneDrive/Desktop/GitHub/capstone-news/real_time_crawling/crawling.py";
-
-    // ✅ 크롤링 결과 JSON 파일이 저장된 폴더 경로
-    private final String DATA_DIR = "C:/Users/cptai/OneDrive/Desktop/GitHub/capstone-news/real_time_crawling/";
+    private final String PYTHON_PATH = "python3";
+    private final String SCRIPT_PATH = "/Users/gihyeon/Documents/github/capstone-news/real_time_crawling/crawling.py";
+    private final String DATA_DIR = "/Users/gihyeon/Downloads/news_crawling/";
 
     public ResponseEntity<?> searchNews(String query) {
         try {
-            // ✅ 파이썬 스크립트 실행
-            ProcessBuilder pb = new ProcessBuilder(PYTHON_PATH, SCRIPT_PATH);
+            // ✅ 파이썬 스크립트 실행 (검색어 인자를 argv로 전달만 함)
+            ProcessBuilder pb = new ProcessBuilder(PYTHON_PATH, SCRIPT_PATH, query);
             pb.redirectErrorStream(true);
             Process process = pb.start();
 
-            // ✅ 검색어를 파이썬 스크립트로 전달
-            process.getOutputStream().write((query + "\n").getBytes());
-            process.getOutputStream().flush();
-
-            // ✅ 파이썬 출력 로그 읽기
+            // ✅ 파이썬 출력 로그 확인
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
                 System.out.println("🐍 PYTHON: " + line);
             }
 
-            process.waitFor(); // 실행 종료까지 대기
+            process.waitFor(); // 파이썬 실행 종료 대기
 
-            //  생성된 JSON 파일 경로
-            String fileName = query + "_naver_news.json";
+            // ✅ 생성된 파일 이름은 파이썬과 동일한 규칙이어야 함
+            String safeQuery = query.replaceAll("[^\\w\\s가-힣-]", "").trim();
+            if (safeQuery.isEmpty()) {
+                throw new IllegalArgumentException("검색어가 비어 있습니다.");
+            }
+
+            String fileName = safeQuery + "_naver_news.json";
             String filePath = DATA_DIR + fileName;
 
-            //  JSON 문자열 읽기
-            String json = Files.readString(Paths.get(filePath));
+            if (!Files.exists(Paths.get(filePath))) {
+                throw new RuntimeException("뉴스 JSON 파일을 찾을 수 없습니다: " + filePath);
+            }
 
-            //  JSON 문자열을 List로 변환
+            // ✅ JSON 읽기
+            String json = Files.readString(Paths.get(filePath));
             ObjectMapper objectMapper = new ObjectMapper();
             List<Map<String, Object>> articles = objectMapper.readValue(json, List.class);
 
-            // ✅ 배열 그대로 응답
             return ResponseEntity.ok(articles);
 
         } catch (Exception e) {

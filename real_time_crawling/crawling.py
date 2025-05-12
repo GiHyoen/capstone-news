@@ -1,97 +1,86 @@
 import os
 import sys
-import io
 import urllib.request
 import datetime
 import json
 import urllib.parse
+import re
 
 client_id = 'aFzMN5Aq9I_yZU53XgP6'
 client_secret = '_VozDZysXY'
-
-sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
-
-# ✅ 저장할 절대 경로 설정
-SAVE_DIR = "C:/Users/cptai/OneDrive/Desktop/GitHub/capstone-news/real_time_crawling"
+SAVE_DIR = "/Users/gihyeon/Downloads/news_crawling/"
 
 def getRequestUrl(url):
     req = urllib.request.Request(url)
     req.add_header("X-Naver-Client-Id", client_id)
     req.add_header("X-Naver-Client-Secret", client_secret)
-
     try:
         response = urllib.request.urlopen(req)
         if response.getcode() == 200:
-            print("[%s]  URL 요청 성공" % datetime.datetime.now())
-            return response.read().decode('utf-8')
+            print(f"[{datetime.datetime.now()}] ✅ URL 요청 성공")
+            return response.read().decode("utf-8")
     except Exception as e:
-        print("", e)
-        print("[%s]  URL 요청 에러 : %s" % (datetime.datetime.now(), url))
-        return None
+        print(f"❌ URL 요청 에러: {e}")
+    return None
 
 def getNaverSearch(node, srcText, start, display):
     base = "https://openapi.naver.com/v1/search"
-    node = "/%s.json" % node
-    parameters = "?query=%s&start=%s&display=%s" % (
-        urllib.parse.quote(srcText), start, display)
-
-    url = base + node + parameters
-    return json.loads(getRequestUrl(url)) if getRequestUrl(url) else None
+    node_path = f"/{node}.json"
+    parameters = f"?query={urllib.parse.quote(srcText)}&start={start}&display={display}"
+    result = getRequestUrl(base + node_path + parameters)
+    return json.loads(result) if result else None
 
 def getPostData(post, jsonResult, cnt):
-    title = post['title']
-    description = post['description']
-    org_link = post['originallink']
-    link = post['link']
-    pDate = datetime.datetime.strptime(post['pubDate'], '%a, %d %b %Y %H:%M:%S +0900')
-    pDate = pDate.strftime('%Y-%m-%d %H:%M:%S')
+    try:
+        pDate = datetime.datetime.strptime(post['pubDate'], '%a, %d %b %Y %H:%M:%S +0900')
+    except ValueError:
+        pDate = datetime.datetime.now()
     jsonResult.append({
         'cnt': cnt,
-        'title': title,
-        'description': description,
-        'org_link': org_link,
-        'link': org_link,
-        'pDate': pDate
+        'title': post.get('title', ''),
+        'description': post.get('description', ''),
+        'org_link': post.get('originallink', ''),
+        'link': post.get('link', ''),
+        'pDate': pDate.strftime('%Y-%m-%d %H:%M:%S')
     })
 
 def main():
-    node = 'news'
-    srcText = input("검색어를 입력하세요: ").strip()
-    cnt = 0
-    jsonResult = []
-    MAX_COUNT = 50  # ✅ 최대 수집 개수
-
-    jsonResponse = getNaverSearch(node, srcText, 1, 100)
-    if jsonResponse is None:
-        print("❌ 검색 결과 없음")
+    if len(sys.argv) < 2:
+        print("❌ 검색어 인자가 없습니다.")
         return
 
-    total = jsonResponse.get('total', 0)
+    srcText = sys.argv[1]
+    safe_text = re.sub(r'[^\w\s-]', '', srcText).strip()
+    if not safe_text:
+        print("❌ 유효하지 않은 검색어입니다.")
+        return
 
-    while (jsonResponse and jsonResponse.get('display') != 0):
+    jsonResult, cnt = [], 0
+    MAX_COUNT = 50
+    start = 1
+
+    while True:
+        jsonResponse = getNaverSearch('news', srcText, start, 100)
+        if not jsonResponse or 'items' not in jsonResponse or not jsonResponse['items']:
+            break
+
         for post in jsonResponse['items']:
             cnt += 1
             getPostData(post, jsonResult, cnt)
-            if cnt >= MAX_COUNT:  # ✅ 50개까지만 수집
+            if cnt >= MAX_COUNT:
                 break
 
-        if cnt >= MAX_COUNT:
+        if cnt >= MAX_COUNT or jsonResponse.get('display', 0) == 0:
             break
 
-        start = jsonResponse['start'] + jsonResponse['display']
-        jsonResponse = getNaverSearch(node, srcText, start, 100)
+        start += jsonResponse.get('display', 0)
 
-    if not os.path.exists(SAVE_DIR):
-        os.makedirs(SAVE_DIR)
+    os.makedirs(SAVE_DIR, exist_ok=True)
+    file_path = os.path.join(SAVE_DIR, f"{safe_text}_naver_news.json")
+    with open(file_path, 'w', encoding='utf8') as f:
+        json.dump(jsonResult, f, indent=4, ensure_ascii=False)
 
-    filename = f"{srcText}_naver_news.json"
-    full_path = os.path.join(SAVE_DIR, filename)
-
-    with open(full_path, 'w', encoding='utf8') as outfile:
-        json.dump(jsonResult, outfile, indent=4, ensure_ascii=False)
-
-    print(f"\n🐍 PYTHON: {cnt}건의 데이터를 수집하였습니다.")
-    print(f"🐍 PYTHON: {full_path} 저장 완료")
+    print(f"\n🐍 PYTHON: {cnt}건 수집 완료 → {file_path}")
 
 if __name__ == '__main__':
     main()

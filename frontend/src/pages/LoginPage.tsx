@@ -9,10 +9,14 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/api/login', null, {
-        params: { username, password },
-        withCredentials: false,
-      });
+      const response = await axios.post(
+        'http://localhost:8080/api/login',
+        null,
+        {
+          params: { username, password },
+          withCredentials: true,
+        }
+      );
       alert(response.data);
     } catch (error: any) {
       alert('로그인 실패: ' + (error.response?.data || error.message));
@@ -41,19 +45,16 @@ const LoginPage = () => {
           <button style={styles.loginBtn} onClick={handleLogin}>로그인</button>
           <button style={styles.signupBtn} onClick={() => navigate('/signup')}>회원가입</button>
         </div>
-        <p style={styles.snsText}>SNS 계정으로 이용하기</p>
-        <div style={styles.snsIcons}>
-          <a href="http://localhost:8080/oauth2/authorization/naver">
-            <img src="/images/naver.png" alt="naver" style={styles.snsIcon} />
+
+        <p style={styles.snsText}>SNS 계정으로 로그인</p>
+        <div style={styles.snsButtons}>
+          <a href="http://localhost:8080/oauth2/authorization/kakao" style={styles.kakaoBtn}>
+            <img src="/images/kakao.png" alt="kakao" style={styles.icon} />
+            카카오 로그인하기
           </a>
-          <a href="http://localhost:8080/oauth2/authorization/kakao">
-            <img src="/images/kakao.png" alt="kakao" style={styles.snsIcon} />
-          </a>
-          <a href="http://localhost:8080/oauth2/authorization/google">
-            <img src="/images/google.png" alt="google" style={styles.snsIcon} />
-          </a>
-          <a href="http://localhost:8080/oauth2/authorization/facebook">
-            <img src="/images/facebook.png" alt="facebook" style={styles.snsIcon} />
+          <a href="http://localhost:8080/oauth2/authorization/naver" style={styles.naverBtn}>
+            <img src="/images/naver.png" alt="naver" style={styles.icon} />
+            네이버 로그인하기
           </a>
         </div>
       </div>
@@ -75,7 +76,7 @@ const styles = {
     borderRadius: '16px',
     textAlign: 'center' as const,
     boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
-    width: '300px',
+    width: '320px',
   },
   loginInput: {
     display: 'block',
@@ -100,6 +101,7 @@ const styles = {
     borderRadius: '7px',
     fontSize: '14px',
     fontWeight: 'bold',
+    cursor: 'pointer',
   },
   signupBtn: {
     flex: 1,
@@ -108,6 +110,7 @@ const styles = {
     borderRadius: '7px',
     fontSize: '14px',
     fontWeight: 'bold',
+    cursor: 'pointer',
   },
   snsText: {
     marginTop: '16px',
@@ -115,16 +118,39 @@ const styles = {
     color: '#444',
     fontWeight: 'bold',
   },
-  snsIcons: {
-    marginTop: '8px',
+  snsButtons: {
+    marginTop: '12px',
     display: 'flex',
-    justifyContent: 'space-around',
+    flexDirection: 'column' as const,
+    gap: '10px',
   },
-  snsIcon: {
-    width: '50px',
-    height: '50px',
-    borderRadius: '6px',
-    cursor: 'pointer',
+  kakaoBtn: {
+    backgroundColor: '#FEE500',
+    color: '#3C1E1E',
+    padding: '10px 16px',
+    borderRadius: '8px',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+  },
+  naverBtn: {
+    backgroundColor: '#03C75A',
+    color: 'white',
+    padding: '10px 16px',
+    borderRadius: '8px',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+  },
+  icon: {
+    width: '24px',
+    height: '24px',
   },
 } as const;
 
