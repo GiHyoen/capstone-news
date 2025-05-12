@@ -53,6 +53,9 @@ function NewsPage() {
             <div key={index} style={{ marginBottom: "12px", borderBottom: "1px solid #ccc", paddingBottom: "10px" }}>
               <h4 dangerouslySetInnerHTML={{ __html: item.title }} />
               <p dangerouslySetInnerHTML={{ __html: item.description }} />
+              {item.summary && (
+                <p style={{ color: "#888", fontStyle: "italic" }}>요약: {item.summary}</p>
+              )}
               <a href={item.link} target="_blank" rel="noopener noreferrer">기사 보기</a>
               <p style={{ color: "gray", fontSize: "12px" }}>{item.pDate}</p>
             </div>
