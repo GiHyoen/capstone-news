@@ -22,18 +22,18 @@ function Header() {
       .get("http://localhost:8080/api/user/me", { withCredentials: true })
       .then((res) => {
         console.log("✅ /api/user/me 응답:", res.data); 
-        const data = res.data as UserResponse; // ✅ 타입 단언 추가
-
-        const username =
-          data.properties?.nickname ||                    // 카카오
-          data.response?.nickname ||                      // 네이버
-          data.kakao_account?.profile?.nickname ||        // 카카오 v2
-          data.nickname ||                                // 기타
-          data.name ||                                    // 일반 로그인
-          data.username ||                                // 일반 로그인
+        const data = res.data as UserResponse;
+  
+        const resolvedName =
+          data.properties?.nickname ||                    
+          data.response?.nickname ||                      
+          data.kakao_account?.profile?.nickname ||        
+          data.nickname ||                                
+          data.name ||                                    
+          data.username ||                                
           "사용자";
-
-        setUsername(username);
+  
+        setUsername(resolvedName);
       })
       .catch(() => {
         setUsername(null);

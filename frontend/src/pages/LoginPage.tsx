@@ -10,14 +10,15 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/login',
-        null,
+        'http://localhost:8080/api/user/login',
+        { username, password },
         {
-          params: { username, password },
-          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true, // 세션 쿠키 포함
         }
       );
       alert(response.data);
+      navigate('/'); // 메인 페이지로 이동
     } catch (error: any) {
       alert('로그인 실패: ' + (error.response?.data || error.message));
     }
