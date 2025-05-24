@@ -1,4 +1,3 @@
-
 package com.example.news.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,30 +11,32 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class NewsService {
-    private final String PYTHON_PATH = "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3";
-    private final String CRAWL_SCRIPT = "/Users/gihyeon/Documents/github/capstone-news/real_time_crawling/crawling.py";
-    private final String SUMMARY_SCRIPT = "/Users/gihyeon/Documents/github/capstone-news/real_time_crawling/summarize.py";
-    private final String DATA_DIR = "/Users/gihyeon/Downloads/news_crawling/";
+    private final String PYTHON_PATH = "C:/Users/cptai/AppData/Local/Microsoft/WindowsApps/python.exe";
+    private final String CRAWL_SCRIPT = "C:/Users/cptai/OneDrive/Desktop/GitHub/capstone-news/real_time_crawling/crawling.py";
+    private final String SUMMARY_SCRIPT = "C:/Users/cptai/OneDrive/Desktop/GitHub/capstone-news/real_time_crawling/summarize.py";
+    private final String DATA_DIR = "C:/Users/cptai/Downloads/news_crawling/";
 
-    public ResponseEntity<?> searchNews(String query) {
+    public ResponseEntity<?> searchNews(String query, int page, int size) {
         try {
             String safeQuery = query.replaceAll("[^\\w\\s가-힣-]", "").trim();
             if (safeQuery.isEmpty()) {
-                throw new IllegalArgumentException("❌ 검색어가 유효하지 않습니다: " + query);
+                throw new IllegalArgumentException(" 검색어가 유효하지 않습니다: " + query);
             }
 
             // 크롤링 실행
             ProcessBuilder crawlPb = new ProcessBuilder(PYTHON_PATH, CRAWL_SCRIPT, query);
             crawlPb.redirectErrorStream(true);
             Process crawlProcess = crawlPb.start();
-            BufferedReader crawlReader = new BufferedReader(new InputStreamReader(crawlProcess.getInputStream()));
-            String line;
-            while ((line = crawlReader.readLine()) != null) {
-                System.out.println("🐍 [CRAWLING] " + line);
+            try (BufferedReader crawlReader = new BufferedReader(new InputStreamReader(crawlProcess.getInputStream()))) {
+                String line;
+                while ((line = crawlReader.readLine()) != null) {
+                    System.out.println(" [CRAWLING] " + line);
+                }
             }
             crawlProcess.waitFor();
 
@@ -43,9 +44,11 @@ public class NewsService {
             ProcessBuilder summaryPb = new ProcessBuilder(PYTHON_PATH, SUMMARY_SCRIPT, query);
             summaryPb.redirectErrorStream(true);
             Process summaryProcess = summaryPb.start();
-            BufferedReader summaryReader = new BufferedReader(new InputStreamReader(summaryProcess.getInputStream()));
-            while ((line = summaryReader.readLine()) != null) {
-                System.out.println("🧠 [SUMMARY] " + line);
+            try (BufferedReader summaryReader = new BufferedReader(new InputStreamReader(summaryProcess.getInputStream()))) {
+                String line;
+                while ((line = summaryReader.readLine()) != null) {
+                    System.out.println(" [SUMMARY] " + line);
+                }
             }
             summaryProcess.waitFor();
 
@@ -56,15 +59,23 @@ public class NewsService {
 
             String json = Files.readString(Paths.get(filePath));
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Map<String, Object>> articles = objectMapper.readValue(json, List.class);
+            List<Map<String, Object>> allArticles = objectMapper.readValue(json, List.class);
 
-            return ResponseEntity.ok(articles);
+            // 페이지네이션 처리
+            int offset = (page - 1) * size;
+            List<Map<String, Object>> pagedArticles = allArticles.stream()
+                    .skip(offset)
+                    .limit(size)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(pagedArticles);
 
         } catch (Exception e) {
-            log.error("❌ 뉴스 검색 중 오류 발생", e);
+            log.error(" 뉴스 검색 중 오류 발생", e);
             return ResponseEntity
                     .internalServerError()
                     .body(Map.of("error", "뉴스 검색 중 오류 발생: " + e.getMessage()));
         }
     }
 }
+

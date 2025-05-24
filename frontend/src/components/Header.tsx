@@ -3,6 +3,15 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaSearch } from "react-icons/fa";
 
+interface UserResponse {
+  name?: string;
+  username?: string;
+  nickname?: string;
+  properties?: { nickname?: string };       // 카카오
+  response?: { nickname?: string };         // 네이버
+  kakao_account?: { profile?: { nickname?: string } }; // 카카오 v2
+}
+
 function Header() {
   const [username, setUsername] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -12,8 +21,19 @@ function Header() {
     axios
       .get("http://localhost:8080/api/user/me", { withCredentials: true })
       .then((res) => {
-        const { name, username } = res.data;
-        setUsername(name || username || "사용자");
+        console.log("✅ /api/user/me 응답:", res.data); 
+        const data = res.data as UserResponse; // ✅ 타입 단언 추가
+
+        const username =
+          data.properties?.nickname ||                    // 카카오
+          data.response?.nickname ||                      // 네이버
+          data.kakao_account?.profile?.nickname ||        // 카카오 v2
+          data.nickname ||                                // 기타
+          data.name ||                                    // 일반 로그인
+          data.username ||                                // 일반 로그인
+          "사용자";
+
+        setUsername(username);
       })
       .catch(() => {
         setUsername(null);
@@ -39,7 +59,6 @@ function Header() {
         <a href="/politics" style={styles.link}>정치</a>
         <a href="/economy" style={styles.link}>경제</a>
 
-        {/* 🔍 검색창 */}
         <div style={styles.searchContainer}>
           <input
             type="text"
@@ -52,7 +71,6 @@ function Header() {
           <FaSearch style={styles.searchIcon} onClick={handleSearch} />
         </div>
 
-        {/* 사용자 로그인 여부 표시 */}
         <div style={styles.userSection}>
           {username ? (
             <>

@@ -16,8 +16,14 @@ public class NewsController {
     private final NewsService newsService;
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchNews(@RequestParam("query") String query) {
-        log.info("🔍 뉴스 검색 요청: {}", query);
-        return newsService.searchNews(query);
+    public ResponseEntity<?> searchNews(
+            @RequestParam("query") String query,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        log.info("뉴스 검색 요청: query={}, page={}, size={}", query, page, size);
+        return newsService.searchNews(query, page, size);
     }
 }
+
+
