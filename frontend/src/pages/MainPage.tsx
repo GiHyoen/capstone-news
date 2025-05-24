@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { CiSquarePlus } from "react-icons/ci";
 import { FaStar, FaBookBookmark } from "react-icons/fa6";
 import Header from "../components/Header";
-import KakaoLogoutButton from "../components/KakaoLogoutButton";
 
 interface NewsCardProps {
   title: string;
@@ -77,11 +76,6 @@ const MainPage: React.FC = () => {
     <div style={styles.app}>
       <Header />
 
-      {/* 로그아웃 버튼 */}
-      <div style={styles.logoutBox}>
-        <KakaoLogoutButton />
-      </div>
-
       <CategoryBar />
       <main style={styles.main}>
         <div style={styles.column}>
@@ -140,10 +134,7 @@ const styles = {
   rightTitle: { fontWeight: 'bold', marginBottom: '12px', fontSize: '16px' },
   rightList: { listStyle: 'none', padding: 0, fontSize: '13px' },
   rightItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' },
-  logoutBox: {
-    display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
-    padding: '8px 24px', marginTop: '60px'
-  },
+
   logoutButton: {
     backgroundColor: '#FEE500', color: '#000', border: 'none',
     padding: '8px 12px', borderRadius: '8px', fontWeight: 600,
