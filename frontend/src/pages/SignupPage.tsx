@@ -16,7 +16,6 @@ function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ✅ 유효성 검사
     if (!username || !password || !passwordConfirm) {
       setErrorMessage("모든 항목을 입력해주세요.");
       return;
@@ -33,24 +32,31 @@ function SignupPage() {
     }
 
     try {
-      // ✅ 아이디 중복 체크 먼저 요청
-      const checkRes = await axios.get(`http://localhost:8080/api/user/check-username?username=${username}`);
-      if (checkRes.data.exists) {
-        setErrorMessage("이미 존재하는 아이디입니다.");
-        return;
-      }
-
-      // ✅ 회원가입 요청
-      await axios.post("http://localhost:8080/api/signup", null, {
-        params: { username, password },
-        withCredentials: false,
+      // 아이디 중복 체크
+      await axios.get("http://localhost:8080/api/user/check-username", {
+        params: { username },
+        withCredentials: true
       });
+
+      // 회원가입 요청
+      await axios.post(
+        "http://localhost:8080/api/user/signup",
+        { username, password },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true
+        }
+      );
 
       alert("회원가입 성공! 로그인 페이지로 이동합니다.");
       navigate("/login");
 
     } catch (err: any) {
-      setErrorMessage("회원가입 실패: " + (err.response?.data?.message || err.message));
+      if (err.response?.status === 409) {
+        setErrorMessage("이미 존재하는 아이디입니다.");
+      } else {
+        setErrorMessage("회원가입 실패: " + (err.response?.data || err.message));
+      }
     }
   };
 

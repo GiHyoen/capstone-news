@@ -1,6 +1,7 @@
 package com.example.news.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,7 +25,6 @@ import java.util.Map;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // ✅ 커스텀 리졸버 클래스 정의 (카카오 OAuth 동의창 설정)
     public static class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
         private final DefaultOAuth2AuthorizationRequestResolver defaultResolver;
 
@@ -56,13 +56,11 @@ public class SecurityConfig {
         }
     }
 
-    // ✅ 비밀번호 암호화기 등록
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ 보안 필터 체인 설정
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         CustomAuthorizationRequestResolver customResolver =
@@ -71,11 +69,20 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session
+                        .sessionFixation().none() // 세션 무효화 방지 설정 추가
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                        })
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/signup",
-                                "/api/login",
-                                "/api/user/**",
+                                "/api/user/signup",
+                                "/api/user/login",
+                                "/api/user/check-username",
+                                "/api/user/me",
                                 "/oauth2/**",
                                 "/login/**",
                                 "/", "/login",
@@ -100,11 +107,10 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ✅ CORS 설정
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(true);  // 세션 쿠키 허용
         config.setAllowedOrigins(List.of("http://localhost:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class NewsService {
-    private final String PYTHON_PATH = "C:/Users/cptai/AppData/Local/Microsoft/WindowsApps/python.exe";
-    private final String CRAWL_SCRIPT = "C:/Users/cptai/OneDrive/Desktop/GitHub/capstone-news/real_time_crawling/crawling.py";
-    private final String SUMMARY_SCRIPT = "C:/Users/cptai/OneDrive/Desktop/GitHub/capstone-news/real_time_crawling/summarize.py";
-    private final String DATA_DIR = "C:/Users/cptai/Downloads/news_crawling/";
+    private final String PYTHON_PATH = "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3";
+    private final String CRAWL_SCRIPT = "/Users/gihyeon/Documents/github/capstone-news/real_time_crawling/crawling.py";
+    private final String SUMMARY_SCRIPT = "/Users/gihyeon/Documents/github/capstone-news/real_time_crawling/summarize.py";
+    private final String DATA_DIR = "/Users/gihyeon/Downloads/news_crawling/";
 
     public ResponseEntity<?> searchNews(String query, int page, int size) {
         try {
