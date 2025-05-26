@@ -15,7 +15,7 @@ client_secret = '_VozDZysXY'
 if platform.system() == "Windows":
     SAVE_DIR = "C:\\Users\\cptai\\Downloads\\news_crawling\\"
 else:
-    SAVE_DIR = "/Users/gihyeon/Downloads/news_crawling/"
+    SAVE_DIR = "/Users/gihyeon/Documents/github/news_crawling/"
 
 def getRequestUrl(url):
     req = urllib.request.Request(url)
