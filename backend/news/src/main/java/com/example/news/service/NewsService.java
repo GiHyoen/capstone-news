@@ -19,7 +19,7 @@ public class NewsService {
     private final String PYTHON_PATH = "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3";
     private final String CRAWL_SCRIPT = "/Users/gihyeon/Documents/github/capstone-news/real_time_crawling/crawling.py";
     private final String SUMMARY_SCRIPT = "/Users/gihyeon/Documents/github/capstone-news/real_time_crawling/summarize.py";
-    private final String DATA_DIR = "/Users/gihyeon/Downloads/news_crawling/";
+    private final String DATA_DIR = "/Users/gihyeon/Documents/github/news_crawling/";
 
     public ResponseEntity<?> searchNews(String query, int page, int size) {
         try {
