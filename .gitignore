@@ -13,3 +13,6 @@ frontend/node_modules/
 
 # 환경파일
 **/.env
+
+__pycache__/
+*.pyc
