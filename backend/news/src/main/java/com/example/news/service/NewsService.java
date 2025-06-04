@@ -57,9 +57,14 @@ public class NewsService {
         Process process = pb.start();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            reader.lines().forEach(line -> log.info(" [CRAWLING] " + line));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                log.info("[CRAWLING] {}", line); // Python print() 출력 로그
+            }
         }
-        process.waitFor();
+
+        int exitCode = process.waitFor();
+        log.info(">>> crawling.py 종료 코드: {}", exitCode);
 
         String filename = query.replaceAll("[^\\w가-힣]", "").trim() + "_naver_news.json";
         Path filePath = Paths.get(DATA_DIR + filename);
@@ -82,6 +87,7 @@ public class NewsService {
                     filtered.put("org_link", article.getOrDefault("org_link", ""));
                     filtered.put("link", article.getOrDefault("link", ""));
                     filtered.put("pDate", article.getOrDefault("pDate", ""));
+                    filtered.put("image", article.getOrDefault("image", ""));
                     return filtered;
                 })
                 .collect(Collectors.toList());

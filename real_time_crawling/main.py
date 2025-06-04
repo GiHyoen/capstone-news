@@ -4,6 +4,7 @@ from typing import List
 from transformers import BartForConditionalGeneration, PreTrainedTokenizerFast
 import re
 import json
+from typing import Optional
 
 app = FastAPI()
 
@@ -18,6 +19,7 @@ class Article(BaseModel):
     org_link: str
     link: str
     pDate: str
+    image: Optional[str] = None
 
 class SummaryRequest(BaseModel):
     articles: List[Article]
@@ -25,11 +27,11 @@ class SummaryRequest(BaseModel):
 @app.post("/api/summarize")
 async def summarize_articles(request: Request):
     try:
-        print("📌 요청 헤더:", dict(request.headers))
+        print("요청 헤더:", dict(request.headers))
         body = await request.json()
         request_data = SummaryRequest(**body)  # 수동 파싱 (오류 유발 시 정확한 지점 확인 가능)
     except Exception as e:
-        print("❌ 파싱 실패:", e)
+        print("파싱 실패:", e)
         return {"error": str(e)}
 
     summarized = []
@@ -43,7 +45,8 @@ async def summarize_articles(request: Request):
             "title": article.title,
             "summary": summary,
             "link": article.link,
-            "date": article.pDate
+            "date": article.pDate,
+            "image" : article.image
         })
 
     return {"results": summarized}

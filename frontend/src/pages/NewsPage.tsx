@@ -3,12 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import NewsCard from "../components/NewsCard";
 import SidebarRecommendations from "../components/SidebarRecommendations";
+import Pagination from "../components/Pagination";
 
 function NewsPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
   const location = useLocation();
   const navigate = useNavigate();
   const pageSize = 5;
@@ -34,10 +35,10 @@ function NewsPage() {
       );
       if (res.data.results) {
         setResults(res.data.results);
-        setHasMore(res.data.results.length === pageSize);
+        setTotalPages(res.data.totalPages || 10); // 총 페이지 수 백엔드에서 받아온다면 반영
       } else {
         setResults([]);
-        setHasMore(false);
+        setTotalPages(1);
       }
     } catch (error) {
       console.error("요약 실패:", error);
@@ -51,14 +52,8 @@ function NewsPage() {
     }
   };
 
-  const handlePrevPage = () => {
-    if (page > 1) {
-      navigate(`/news?query=${encodeURIComponent(query)}&page=${page - 1}`);
-    }
-  };
-
-  const handleNextPage = () => {
-    navigate(`/news?query=${encodeURIComponent(query)}&page=${page + 1}`);
+  const handlePageChange = (newPage: number) => {
+    navigate(`/news?query=${encodeURIComponent(query)}&page=${newPage}`);
   };
 
   return (
@@ -88,26 +83,19 @@ function NewsPage() {
                 summary={item.summary}
                 link={item.link}
                 date={item.date}
+                image={item.image}
               />
             ))}
           </div>
+
+          {/* 하단 페이지네이션 */}
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} query={query}/>
         </div>
 
         {/* 우측 사이드 추천 */}
         <div style={styles.sidebar}>
           <SidebarRecommendations />
         </div>
-      </div>
-
-      {/* 하단 페이지네이션 */}
-      <div style={styles.pagination}>
-        <button onClick={handlePrevPage} disabled={page === 1}>
-          이전
-        </button>
-        <span style={{ fontWeight: "bold" }}>{page} 페이지</span>
-        <button onClick={handleNextPage} disabled={!hasMore}>
-          다음
-        </button>
       </div>
     </>
   );
@@ -151,20 +139,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: "flex",
     flexDirection: "column",
     gap: "20px",
-  },
-  pagination: {
-    position: "fixed",
-    bottom: 0,
-    left: 0,
-    width: "100%",
-    backgroundColor: "#f9f9f9",
-    padding: "12px 0",
-    borderTop: "1px solid #ccc",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "10px",
-    zIndex: 999,
   },
 };
 
