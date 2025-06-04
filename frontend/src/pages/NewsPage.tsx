@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import NewsCard from "../components/NewsCard";
+import SidebarRecommendations from "../components/SidebarRecommendations";
 
 function NewsPage() {
   const [query, setQuery] = useState("");
@@ -22,20 +24,23 @@ function NewsPage() {
 
   const handleSearch = async (keyword: string, pageNum: number) => {
     try {
-      const res = await axios.get("http://localhost:8080/api/news/search", {
-        params: { query: keyword, page: pageNum, size: pageSize },
-        withCredentials: true
-      });
-      if (Array.isArray(res.data)) {
-        setResults(res.data);
-        setHasMore(res.data.length === pageSize);
+      const res = await axios.post(
+        "http://localhost:8080/api/summarize/summarize",
+        {},
+        {
+          params: { query: keyword, page: pageNum, size: pageSize },
+          withCredentials: true,
+        }
+      );
+      if (res.data.results) {
+        setResults(res.data.results);
+        setHasMore(res.data.results.length === pageSize);
       } else {
         setResults([]);
         setHasMore(false);
-        console.warn("서버 응답이 배열이 아닙니다:", res.data);
       }
     } catch (error) {
-      console.error("검색 실패:", error);
+      console.error("요약 실패:", error);
       setResults([]);
     }
   };
@@ -58,58 +63,109 @@ function NewsPage() {
 
   return (
     <>
-      {/* ✅ 뉴스 콘텐츠 영역 */}
-      <div style={{ padding: "80px 20px 100px" }}>
-        <h2>실시간 뉴스 검색</h2>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          style={{ marginRight: "10px", padding: "8px", fontSize: "14px" }}
-        />
-        <button onClick={handleSubmit} style={{ padding: "8px 16px" }}>검색</button>
+      <div style={styles.container}>
+        {/* 좌측 뉴스 리스트 */}
+        <div style={styles.mainColumn}>
+          <h2 style={styles.heading}>‘{query}’ 에 대한 검색결과</h2>
+          <div style={styles.searchRow}>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+              style={styles.searchInput}
+            />
+            <button onClick={handleSubmit} style={styles.searchButton}>
+              검색
+            </button>
+          </div>
 
-        <div style={{ marginTop: "20px" }}>
-          {results.length > 0 ? (
-            results.map((item, index) => (
-              <div key={index} style={{ marginBottom: "12px", borderBottom: "1px solid #ccc", paddingBottom: "10px" }}>
-                <h4 dangerouslySetInnerHTML={{ __html: item.title }} />
-                <p dangerouslySetInnerHTML={{ __html: item.description }} />
-                {item.summary && (
-                  <p style={{ color: "#888", fontStyle: "italic" }}>요약: {item.summary}</p>
-                )}
-                <a href={item.link} target="_blank" rel="noopener noreferrer">기사 보기</a>
-                <p style={{ color: "gray", fontSize: "12px" }}>{item.pDate}</p>
-              </div>
-            ))
-          ) : (
-            <p>표시할 뉴스가 없습니다.</p>
-          )}
+          <div style={styles.cardList}>
+            {results.map((item, index) => (
+              <NewsCard
+                key={index}
+                title={item.title}
+                summary={item.summary}
+                link={item.link}
+                date={item.date}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* 우측 사이드 추천 */}
+        <div style={styles.sidebar}>
+          <SidebarRecommendations />
         </div>
       </div>
 
-      {/* ✅ 뉴스 콘텐츠 div 바깥, return 내부에 존재 → 반드시 렌더링됨 */}
-      <div style={{
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        width: "100%",
-        backgroundColor: "#f9f9f9",
-        padding: "12px 0",
-        borderTop: "1px solid #ccc",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "10px",
-        zIndex: 999
-      }}>
-        <button onClick={handlePrevPage} disabled={page === 1}>이전</button>
+      {/* 하단 페이지네이션 */}
+      <div style={styles.pagination}>
+        <button onClick={handlePrevPage} disabled={page === 1}>
+          이전
+        </button>
         <span style={{ fontWeight: "bold" }}>{page} 페이지</span>
-        <button onClick={handleNextPage} disabled={!hasMore}>다음</button>
+        <button onClick={handleNextPage} disabled={!hasMore}>
+          다음
+        </button>
       </div>
     </>
   );
 }
+
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    display: "flex",
+    padding: "100px 24px 80px",
+    maxWidth: "1200px",
+    margin: "0 auto",
+  },
+  mainColumn: {
+    flex: 3,
+    paddingRight: "24px",
+  },
+  sidebar: {
+    flex: 1,
+    borderLeft: "1px solid #eee",
+    paddingLeft: "16px",
+  },
+  heading: {
+    fontSize: "24px",
+    fontWeight: "bold",
+    marginBottom: "12px",
+  },
+  searchRow: {
+    display: "flex",
+    marginBottom: "20px",
+  },
+  searchInput: {
+    flex: 1,
+    padding: "8px",
+    fontSize: "14px",
+    marginRight: "10px",
+  },
+  searchButton: {
+    padding: "8px 16px",
+  },
+  cardList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+  },
+  pagination: {
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+    width: "100%",
+    backgroundColor: "#f9f9f9",
+    padding: "12px 0",
+    borderTop: "1px solid #ccc",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    zIndex: 999,
+  },
+};
 
 export default NewsPage;

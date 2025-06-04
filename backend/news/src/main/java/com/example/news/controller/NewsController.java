@@ -8,22 +8,20 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/news")
+@RequestMapping("/api/summarize")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class NewsController {
 
     private final NewsService newsService;
 
-    @GetMapping("/search")
-    public ResponseEntity<?> searchNews(
+    @PostMapping("/summarize")
+    public ResponseEntity<?> summarizeNews(
             @RequestParam("query") String query,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size
     ) {
-        log.info("뉴스 검색 요청: query={}, page={}, size={}", query, page, size);
-        return newsService.searchNews(query, page, size);
+        log.info("요청 수신: /api/summarize/summarize, query={}, page={}, size={}", query, page, size);
+        return newsService.searchAndSummarizeNews(query, page, size);
     }
 }
-
-
