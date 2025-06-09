@@ -9,8 +9,8 @@
 
 .news-thumbnail-wrapper {
   flex-shrink: 0;
-  width: 128px;
-  height: 80px;
+  width: 180px;
+  height: 150px;
 }
 
 .news-thumbnail {
