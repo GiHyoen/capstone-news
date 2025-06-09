@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/summarize")
@@ -15,13 +17,12 @@ public class NewsController {
 
     private final NewsService newsService;
 
-    @PostMapping("/summarize")
-    public ResponseEntity<?> summarizeNews(
-            @RequestParam("query") String query,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size
-    ) {
-        log.info("요청 수신: /api/summarize/summarize, query={}, page={}, size={}", query, page, size);
-        return newsService.searchAndSummarizeNews(query, page, size);
+    //  [1] URI 변경 권장: /summarize → /search로 (중복 단어 제거)
+    //  [2] @GetMapping은 params에 긴 query 문자열 포함 시 가독성/제한 이슈 → @PostMapping 권장
+    @PostMapping("/search")
+    public ResponseEntity<?> summarizeNews(@RequestBody Map<String, String> body) {
+        String query = body.get("query");
+        log.info(" 요약 요청 수신: query={}", query);
+        return newsService.searchAndSummarizeNews(query);
     }
 }

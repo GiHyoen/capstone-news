@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import java.io.*;
 import java.net.URI;
 import java.net.http.*;
@@ -20,15 +21,15 @@ public class NewsService {
     private final String SCRIPT_PATH = "/Users/gihyeon/Documents/github/capstone-news/real_time_crawling/crawling.py";
     private final String DATA_DIR = "/Users/gihyeon/Documents/github/news_crawling/";
 
-    public ResponseEntity<?> searchAndSummarizeNews(String query, int page, int size) {
+    public ResponseEntity<?> searchAndSummarizeNews(String query) {
         try {
-            List<Map<String, Object>> articles = crawlFromNaver(query, page, size);
+            // ✅ 전체 기사 50개 수집
+            List<Map<String, Object>> articles = crawlFromNaver(query);
 
+            // ✅ 전체 기사 리스트를 FastAPI에 전송
             Map<String, Object> requestBody = Map.of("articles", articles);
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonPayload = objectMapper.writeValueAsString(requestBody);
-            System.out.println("🚨 실제 전송할 JSON:\n" + jsonPayload);
-
             log.info("최종 jsonPayload: {}", jsonPayload);
 
             HttpClient client = HttpClient.newBuilder()
@@ -44,14 +45,18 @@ public class NewsService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            return ResponseEntity.status(response.statusCode()).body(objectMapper.readValue(response.body(), Map.class));
+            return ResponseEntity
+                    .status(response.statusCode())
+                    .body(objectMapper.readValue(response.body(), Map.class));
+
         } catch (Exception e) {
             log.error("searchAndSummarizeNews 실패", e);
             return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
         }
     }
 
-    private List<Map<String, Object>> crawlFromNaver(String query, int page, int size) throws Exception {
+    // ✅ page, size 제거된 최종 크롤링 함수
+    private List<Map<String, Object>> crawlFromNaver(String query) throws Exception {
         ProcessBuilder pb = new ProcessBuilder(PYTHON_PATH, SCRIPT_PATH, query);
         pb.redirectErrorStream(true);
         Process process = pb.start();
@@ -59,7 +64,7 @@ public class NewsService {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                log.info("[CRAWLING] {}", line); // Python print() 출력 로그
+                log.info("[CRAWLING] {}", line);
             }
         }
 
@@ -76,9 +81,8 @@ public class NewsService {
         ObjectMapper mapper = new ObjectMapper();
         List<Map<String, Object>> allArticles = mapper.readValue(Files.readString(filePath), List.class);
 
-        List<Map<String, Object>> selected = allArticles.stream()
-                .skip((long) (page - 1) * size)
-                .limit(size)
+        return allArticles.stream()
+                .limit(50)
                 .map(article -> {
                     Map<String, Object> filtered = new HashMap<>();
                     filtered.put("cnt", article.getOrDefault("cnt", 0));
@@ -91,7 +95,5 @@ public class NewsService {
                     return filtered;
                 })
                 .collect(Collectors.toList());
-
-        return selected;
     }
 }

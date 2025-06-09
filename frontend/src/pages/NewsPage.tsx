@@ -7,6 +7,7 @@ import Pagination from "../components/Pagination";
 
 function NewsPage() {
   const [query, setQuery] = useState("");
+  const [allResults, setAllResults] = useState<any[]>([]);
   const [results, setResults] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -20,31 +21,45 @@ function NewsPage() {
     const p = parseInt(params.get("page") || "1", 10);
     setQuery(q);
     setPage(p);
-    if (q) handleSearch(q, p);
+
+    if (q) {
+      fetchSummarizedNews(q); // ✅ 최초 1회만 전체 요청
+    }
   }, [location.search]);
 
-  const handleSearch = async (keyword: string, pageNum: number) => {
-    try {
-      const res = await axios.post(
-        "http://localhost:8080/api/summarize/summarize",
-        {},
-        {
-          params: { query: keyword, page: pageNum, size: pageSize },
-          withCredentials: true,
-        }
-      );
-      if (res.data.results) {
-        setResults(res.data.results);
-        setTotalPages(res.data.totalPages || 10); // 총 페이지 수 백엔드에서 받아온다면 반영
-      } else {
-        setResults([]);
-        setTotalPages(1);
+  const fetchSummarizedNews = async (keyword: string) => {
+  try {
+    const res = await axios.post(
+      "http://localhost:8080/api/summarize/search",
+      { query: keyword }, // ✅ JSON body로 query 전달
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json", // ✅ 필수
+        },
       }
-    } catch (error) {
-      console.error("요약 실패:", error);
+    );
+
+    if (res.data.results) {
+      const fullList = res.data.results;
+      setAllResults(fullList);
+      setTotalPages(Math.ceil(fullList.length / pageSize));
+      setResults(fullList.slice((page - 1) * pageSize, page * pageSize));
+    } else {
+      setAllResults([]);
       setResults([]);
+      setTotalPages(1);
     }
-  };
+  } catch (error) {
+    console.error("요약 실패:", error);
+    setAllResults([]);
+    setResults([]);
+  }
+};
+
+  useEffect(() => {
+    setResults(allResults.slice((page - 1) * pageSize, page * pageSize));
+  }, [page, allResults]);
 
   const handleSubmit = () => {
     if (query.trim()) {
@@ -57,47 +72,49 @@ function NewsPage() {
   };
 
   return (
-    <>
-      <div style={styles.container}>
-        {/* 좌측 뉴스 리스트 */}
-        <div style={styles.mainColumn}>
-          <h2 style={styles.heading}>‘{query}’ 에 대한 검색결과</h2>
-          <div style={styles.searchRow}>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-              style={styles.searchInput}
+    <div style={styles.container}>
+      {/* 좌측 뉴스 리스트 */}
+      <div style={styles.mainColumn}>
+        <h2 style={styles.heading}>‘{query}’ 에 대한 검색결과</h2>
+        <div style={styles.searchRow}>
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            style={styles.searchInput}
+          />
+          <button onClick={handleSubmit} style={styles.searchButton}>
+            검색
+          </button>
+        </div>
+
+        <div style={styles.cardList}>
+          {results.map((item, index) => (
+            <NewsCard
+              key={index}
+              title={item.title}
+              summary={item.summary}
+              link={item.link}
+              date={item.date}
+              image={item.image}
             />
-            <button onClick={handleSubmit} style={styles.searchButton}>
-              검색
-            </button>
-          </div>
-
-          <div style={styles.cardList}>
-            {results.map((item, index) => (
-              <NewsCard
-                key={index}
-                title={item.title}
-                summary={item.summary}
-                link={item.link}
-                date={item.date}
-                image={item.image}
-              />
-            ))}
-          </div>
-
-          {/* 하단 페이지네이션 */}
-          <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} query={query}/>
+          ))}
         </div>
 
-        {/* 우측 사이드 추천 */}
-        <div style={styles.sidebar}>
-          <SidebarRecommendations />
-        </div>
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          query={query}
+        />
       </div>
-    </>
+
+      {/* 우측 사이드 추천 */}
+      <div style={styles.sidebar}>
+        <SidebarRecommendations />
+      </div>
+    </div>
   );
 }
 
